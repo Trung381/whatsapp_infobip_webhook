@@ -62,6 +62,23 @@ app.post("/webhooks/whatsapp/inbound", requireAuth, (req, res) => {
 });
 
 /**
+ *  received status REPORTS WEBHOOK
+ *    Doc: Receive WhatsApp status reports
+ *    URL gợi ý: /webhooks/whatsapp/status
+ */
+app.post("/webhooks/whatsapp/status", requireAuth, (req, res) => {
+    const events = toEvents(req.body);
+  
+    for (const ev of events) {
+      // Trường hay gặp: messageId, to, sentAt/doneAt, status{groupId, groupName, id, name, description}
+      safeLog("STATUS", ev);
+      // Cập nhật trạng thái vào DB theo messageId
+    }
+  
+    res.status(200).json({ received: true });
+});
+
+/**
  * 2) DELIVERY REPORTS WEBHOOK
  *    Doc: Receive WhatsApp delivery reports
  *    URL gợi ý: /webhooks/whatsapp/status/delivery
@@ -139,6 +156,7 @@ app.listen(PORT, () => {
   console.log(`Webhook server listening on port ${PORT}`);
   console.log("Endpoints:");
   console.log("  POST /webhooks/whatsapp/inbound");
+  console.log("  POST /webhooks/whatsapp/status");
   console.log("  POST /webhooks/whatsapp/status/delivery");
   console.log("  POST /webhooks/whatsapp/status/seen");
   console.log("  POST /webhooks/whatsapp/payments");
